@@ -34,6 +34,12 @@ class _StackedSheetCoordinatorState extends State<StackedSheetCoordinator> {
   void initState() {
     super.initState();
     widget.controller.addListener(_syncOverlayWithController);
+
+    // Ensure we sync initial state after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _syncOverlayWithController();
+    });
+
   }
 
   @override
@@ -59,6 +65,7 @@ class _StackedSheetCoordinatorState extends State<StackedSheetCoordinator> {
   }
 
   void _syncOverlayWithController() {
+    if (!mounted) return; // Guard against disposed state
     if (widget.controller.hasSheets) {
       if (_overlayEntry == null) {
         _overlayEntry = OverlayEntry(
@@ -83,13 +90,11 @@ class _StackedSheetCoordinatorState extends State<StackedSheetCoordinator> {
 
 class _StackedSheetStackPresenter extends StatelessWidget {
   final StackedSheetController controller;
-
   const _StackedSheetStackPresenter({required this.controller});
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
@@ -109,9 +114,13 @@ class _StackedSheetStackPresenter extends StatelessWidget {
               StackedSheet sheet = entry.value;
               int distanceFromTop = controller.sheets.length - 1 - index;
 
-              // Parallax scaling and offset calculations
-              double targetScale = 1.0 - (distanceFromTop * 0.05);
-              double targetYOffset = distanceFromTop * 24.0;
+              // Visual depth clamping: stop visual changes after 3 layers deep
+              // This prevents sheets from becoming too small or flying off screen
+              int visualDepth = distanceFromTop.clamp(0, 10);
+
+              // Parallax scaling and offset calculations based on clamped depth
+              double targetScale = 1.0 - (visualDepth * 0.05);
+              double targetYOffset = visualDepth * 16.0;
 
               return AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
@@ -119,9 +128,7 @@ class _StackedSheetStackPresenter extends StatelessWidget {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                top:
-                    targetYOffset +
-                    (mediaQuery.size.height * (1 - sheet.initialExtent)),
+                top: targetYOffset + (mediaQuery.size.height * (1 - sheet.initialExtent)),
                 child: AnimatedScale(
                   scale: targetScale,
                   duration: const Duration(milliseconds: 300),
