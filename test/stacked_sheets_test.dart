@@ -35,5 +35,16 @@ void main() {
       expect(controller.sheets.length, 1);
       expect(controller.sheets.first, sheet1);
     });
+
+    test('Should respect maxSheets limit', () {
+      final controller = StackedSheetController(maxSheets: 2);
+      final sheet = StackedSheet(child: const SizedBox());
+
+      controller.push(sheet);
+      controller.push(sheet);
+      controller.push(sheet); // This should be ignored
+
+      expect(controller.sheets.length, 2);
+    });
   });
 }

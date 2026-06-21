@@ -2,7 +2,7 @@ name: stacked_sheets
 
 description: "An advanced, overlay-driven bottom sheet stack with fluid 3D parallax scaling and custom gesture dismissals."
 
-version: 0.0.1
+version: 0.0.2
 
 repository: "https://github.com/mrityudata/stacked_sheets"
 issue_tracker: "https://github.com/mrityudata/stacked_sheets/issues"

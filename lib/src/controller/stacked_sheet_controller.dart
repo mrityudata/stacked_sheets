@@ -6,6 +6,12 @@ import 'package:stacked_sheets/src/model/stacked_sheet_model.dart';
 /// Use this controller to [push], [pop], or [clear] sheets from the stack.
 /// It extends [ChangeNotifier], so it can be listened to for updates.
 class StackedSheetController extends ChangeNotifier {
+  /// The maximum number of sheets allowed in the stack. Defaults to 10.
+  final int maxSheets;
+
+  /// Creates a [StackedSheetController] with an optional [maxSheets] limit.
+  StackedSheetController({this.maxSheets = 10});
+
   final List<StackedSheet> _sheets = [];
 
   /// An unmodifiable list of current [StackedSheet]s in the stack.
@@ -17,9 +23,16 @@ class StackedSheetController extends ChangeNotifier {
   /// Adds a new [sheet] to the top of the stack.
   ///
   /// This will trigger a notification to listeners and cause the UI to update.
-  void push(StackedSheet sheet) {
+  /// Returns `true` if the sheet was successfully added, or `false` if the
+  /// [maxSheets] limit has been reached.
+  bool push(StackedSheet sheet) {
+    if (_sheets.length >= maxSheets) {
+      debugPrint('StackedSheetController: Reached maxSheets limit ($maxSheets).');
+      return false;
+    }
     _sheets.add(sheet);
     notifyListeners();
+    return true; 
   }
 
   /// Removes the topmost sheet from the stack.

@@ -25,7 +25,7 @@ Add `stacked_sheets` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  stacked_sheets: ^0.0.1
+  stacked_sheets: ^0.0.2
 ```
 
 Or run:
@@ -93,7 +93,7 @@ The `StackedSheetController` provides several methods to manage the stack:
 
 | Method | Description |
 | --- | --- |
-| `push(StackedSheet)` | Adds a new sheet to the top of the stack. |
+| `push(StackedSheet)` | Adds a new sheet. Returns `false` if `maxSheets` is reached. |
 | `pop()` | Removes the topmost sheet. |
 | `clear()` | Closes all open sheets at once. |
 | `sheets` | Access the current list of active sheets. |
@@ -103,7 +103,7 @@ The `StackedSheetController` provides several methods to manage the stack:
 The `StackedSheet` model allows for per-sheet customization:
 
 ```dart
-StackedSheet(
+final sheet = StackedSheet(
   child: MyWidget(),
   initialExtent: 0.8, // 0.0 to 1.0 (80% of screen height)
   dismissible: true,   // Allow dismissal (WIP)

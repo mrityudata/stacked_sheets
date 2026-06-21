@@ -30,55 +30,57 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final StackedSheetController _controller = StackedSheetController();
+  final StackedSheetController _controller = StackedSheetController(maxSheets: 5);
 
   void _pushSheet() {
     final sheetIndex = _controller.sheets.length + 1;
-    _controller.push(
+     _controller.push(
       StackedSheet(
         initialExtent: 0.7 - (sheetIndex * 0.05).clamp(0, 0.2),
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Stacked Sheet #$sheetIndex',
-                    style: Theme.of(context).textTheme.headlineSmall,
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Stacked Sheet #$sheetIndex',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => _controller.pop(),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                const SizedBox(height: 20),
+                Text(
+                  'This is sheet number $sheetIndex in the stack.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _pushSheet,
+                    child: const Text('Push Another Sheet'),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
                     onPressed: () => _controller.pop(),
+                    child: const Text('Pop This Sheet'),
                   ),
-                ],
-              ),
-              const Divider(),
-              const SizedBox(height: 20),
-              Text(
-                'This is sheet number $sheetIndex in the stack.',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _pushSheet,
-                  child: const Text('Push Another Sheet'),
                 ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () => _controller.pop(),
-                  child: const Text('Pop This Sheet'),
-                ),
-              ),
-              const SizedBox(height: 40),
-            ],
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
